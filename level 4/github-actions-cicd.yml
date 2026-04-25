@@ -1,0 +1,33 @@
+# This file lives in your repository under .github/workflows/
+# It automates testing and building every time you push code to GitHub.
+
+name: .NET CI/CD Pipeline
+
+# Trigger this pipeline automatically when code is pushed to the 'main' branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # GitHub provides a temporary Linux server to run this
+
+    steps:
+    - name: Download Repository Code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET 8 Environment
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore Dependencies
+      run: dotnet restore
+
+    - name: Build Application
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run Automated Unit Tests
+      run: dotnet test --no-build --verbosity normal
